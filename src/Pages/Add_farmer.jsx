@@ -62,7 +62,7 @@ const Add_farmer = () => {
             <FormField label="Phone / फ़ोन नंबर" name="phone" type="text" />
             <FormField label="Address / पता" name="address" type="textarea" />
             <FormField label="Land Size (acres) / भूमि का आकार (एकड़ में)" name="landSize" type="text" />
-            <FormField label="What You Grow / आप क्या उगाते हैं" name="crops" type="text" placeholder="e.g. Wheat / गेंहू, Rice / चावल" />
+            <FormField label="What You Grow / आप क्या उगाते हैं" name="crops" type="text" placeholder="e.g. Wheat / गेंहू , Rice / चावल" />
 
             <button
               type="submit"

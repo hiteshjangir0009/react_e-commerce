@@ -1,5 +1,5 @@
 import { FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -27,10 +27,10 @@ const Footer = () => {
         <div>
           <h3 className="text-lg font-semibold mb-3">Customer Support</h3>
           <ul className="text-gray-400 space-y-2">
-            <li><a href="/faqs" className="hover:text-gray-200">FAQs</a></li>
-            <li><a href="/shiping" className="hover:text-gray-200">Shipping & Returns</a></li>
-            <li><a href="/privacy" className="hover:text-gray-200">Privacy Policy</a></li>
-            <li><a href="terms" className="hover:text-gray-200">Terms & Conditions</a></li>
+            <li><Link to="/Faqs" className="hover:text-gray-200">FAQs</Link></li>
+            <li><Link to="/shiping" className="hover:text-gray-200">Shipping & Returns</Link></li>
+            <li><Link to="/privacy" className="hover:text-gray-200">Privacy Policy</Link></li>
+            <li><Link to="terms" className="hover:text-gray-200">Terms & Conditions</Link></li>
           </ul>
         </div>
 

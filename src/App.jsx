@@ -32,7 +32,7 @@ function App() {
           <Route path="/detail/:id" element={<ProductDetails />} />
           
           
-          <Route path="/faqs" element={<Faqs />} />
+          <Route path="/Faqs" element={<Faqs />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/shiping" element={<Shiping_refund_cancel />} />
           <Route path="/privacy" element={<Privacy />} />

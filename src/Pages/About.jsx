@@ -86,22 +86,22 @@ const About = () => {
                 {
                   name: "Anurag",
                   role: "",
-                  image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1961&q=80"
+                  image: "https://img.freepik.com/free-vector/isolated-young-handsome-man-different-poses-white-background-illustration_632498-859.jpg?t=st=1744373929~exp=1744377529~hmac=25c02897555e65733b39fcd3efd08f8468fd1e890999a5ac3e56eb28564edba5&w=1380"
                 },
                 {
                   name: "Sanskar Bhardwaj",
                   role: "",
-                  image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1961&q=80"
+                  image: "https://img.freepik.com/free-vector/isolated-young-handsome-man-different-poses-white-background-illustration_632498-859.jpg?t=st=1744373929~exp=1744377529~hmac=25c02897555e65733b39fcd3efd08f8468fd1e890999a5ac3e56eb28564edba5&w=1380"
                 },
                 {
                   name: "Sagar beniwal",
                   role: "",
-                  image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1961&q=80"
+                  image: "https://img.freepik.com/free-vector/isolated-young-handsome-man-different-poses-white-background-illustration_632498-859.jpg?t=st=1744373929~exp=1744377529~hmac=25c02897555e65733b39fcd3efd08f8468fd1e890999a5ac3e56eb28564edba5&w=1380"
                 },
                 {
                   name: "Prateek",
                   role: "",
-                  image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1961&q=80"
+                  image: "https://img.freepik.com/free-vector/isolated-young-handsome-man-different-poses-white-background-illustration_632498-859.jpg?t=st=1744373929~exp=1744377529~hmac=25c02897555e65733b39fcd3efd08f8468fd1e890999a5ac3e56eb28564edba5&w=1380"
                 }
               ].map((member, index) => (
                 <div key={index} className="bg-card border border-border/50 rounded-lg overflow-hidden shadow-sm transition-transform hover:-translate-y-1 duration-300">

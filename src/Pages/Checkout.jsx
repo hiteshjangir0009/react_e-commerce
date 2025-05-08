@@ -2,23 +2,36 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../Layout/Layout';
 import { API_url, GetAPI, PostAPI } from '../Utils/API_config';
 import Cookies from "js-cookie";
+import loadRazorpay from '../Utils/loadRazorpay';
+import { useNavigate } from 'react-router-dom';
 
 const Checkout = () => {
+    const navigate = useNavigate();
     // Example state to manage products in the cart
     const [cartItems, setCartItems] = useState([]);
+    const [Payment_status, setPayment_status] = useState(false);
     const [shippingAddress, setShippingAddress] = useState({
         state: "",
         city: "",
         pincode: "",
         address: ""
     });
-    
+    const [customerInfo, setCustomerInfo] = useState({
+        name: '',
+        email: '',
+        phone: ''
+    });
+
+
 
     useEffect(() => {
         cart_req();
     }, []);
 
     const cart_req = async () => {
+        // TEST_KEY_ID =rzp_test_FwoIuE1CTsYWA8
+        console.log(".env ==>>", import.meta.env.VITE_TEST_KEY_ID);
+
         try {
             const response = await GetAPI(API_url.Get_Cart_data);
             console.log("cart==>>", response);
@@ -28,7 +41,40 @@ const Checkout = () => {
         }
     };
 
-    const checkout_req = async () => {
+    const DeleteAPI = async () => {
+        try {
+            const token = Cookies.get('Access_token');
+
+            const myHeaders = new Headers();
+            myHeaders.append("Authorization", `Bearer ${token}`);
+
+
+            const response = await fetch('https://api.khetconnect.xyz/api/v1/product/clear', {
+                method: "DELETE",
+                headers: myHeaders,
+                redirect: "follow"
+            });
+            const result = await response.json();
+            console.log('DeleteAPI result:', result);
+            if (result.success) {
+                // window.location.reload();
+                navigate('/'); 
+
+            }
+            return result;
+        } catch (error) {
+            console.error('DeleteAPI Error:', error);
+            throw error;
+        }
+    };
+
+
+    const checkout_req = async (response) => {
+
+        let pay_status = "Pending"
+
+
+
         const token = Cookies.get("Access_token");
 
         if (!shippingAddress.state || !shippingAddress.city || !shippingAddress.pincode || !shippingAddress.address) {
@@ -44,8 +90,9 @@ const Checkout = () => {
         const raw = JSON.stringify({
             "cart": cartItems,
             "totalAmount": calculateTotal(),
-            "paymentStatus": "Pending",
-            "shippingAddress": shippingAddress
+            "paymentStatus": "Completed",
+            "shippingAddress": shippingAddress,
+            "paymentId": response.razorpay_payment_id,
         });
 
         const requestOptions = {
@@ -56,16 +103,81 @@ const Checkout = () => {
         };
 
         try {
-            const response = await fetch("https://api.khetconnect.xyz/api/v1/checkout/checkout", requestOptions);
-            const result = await response.json();
-            console.log("result ==>>",result);
-            if (result.success ==true) {
+            const res = await fetch("https://api.khetconnect.xyz/api/v1/checkout/checkout", requestOptions);
+            const result = await res.json();
+            console.log("result ==>>", result);
+
+            if (result.success == true) {
                 alert("your order is on the way")
+                DeleteAPI()
             }
         } catch (error) {
             console.error(error);
         };
+
     };
+
+
+    // razorpay payment
+    const handleRazorpayPayment = async () => {
+        // Validate customer info
+        const { name, email, phone } = customerInfo;
+        if (!name || !email || !phone) {
+            alert("Please fill in your name, email, and phone number.");
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneRegex = /^[0-9]{10}$/;
+
+        if (!emailRegex.test(email)) {
+            alert("Please enter a valid email address.");
+            return;
+        }
+
+        if (!phoneRegex.test(phone)) {
+            alert("Please enter a valid 10-digit phone number.");
+            return;
+        }
+
+        const res = await loadRazorpay();
+        if (!res) {
+            alert("Razorpay SDK failed to load.");
+            return;
+        }
+
+        const options = {
+            key: import.meta.env.VITE_TEST_KEY_ID,
+            amount: (calculateTotal()) * 100,
+            currency: "INR",
+            name: "Khet Connect",
+            description: "Test Transaction",
+            handler: function (response) {
+                // alert(`Payment successful! Payment ID: ${response.razorpay_payment_id}`);
+                if (response.razorpay_payment_id) {
+                    checkout_req(response);
+
+                }
+                console.log("response ==>>", response);
+            },
+            prefill: {
+                name,
+                email,
+                contact: phone,
+            },
+            notes: {
+                address: shippingAddress.address,
+            },
+            theme: {
+                color: "#0f9d58",
+            },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+    };
+
+
 
 
     // Function to calculate total price
@@ -104,23 +216,37 @@ const Checkout = () => {
                 </div>
 
                 {/* Customer Information Form */}
-                <div className="mb-6">
-                    <h3 className="text-xl font-semibold">Customer Information</h3>
-                    <form className="space-y-4 mt-4">
-                        <div>
-                            <label className="block text-sm font-medium">Full Name</label>
-                            <input type="text" className="w-full p-2 border rounded" placeholder="Enter your full name" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium">Email Address</label>
-                            <input type="email" className="w-full p-2 border rounded" placeholder="Enter your email address" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium">Phone Number</label>
-                            <input type="tel" className="w-full p-2 border rounded" placeholder="Enter your phone number" />
-                        </div>
-                    </form>
+                <div className='mb-6'>
+                    <label className="block text-sm font-medium">Full Name</label>
+                    <input
+                        type="text"
+                        className="w-full p-2 border rounded"
+                        placeholder="Enter your full name"
+                        value={customerInfo.name}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                    />
                 </div>
+                <div className='mb-6'>
+                    <label className="block text-sm font-medium">Email Address</label>
+                    <input
+                        type="email"
+                        className="w-full p-2 border rounded"
+                        placeholder="Enter your email address"
+                        value={customerInfo.email}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, email: e.target.value })}
+                    />
+                </div>
+                <div className='mb-6'>
+                    <label className="block text-sm font-medium">Phone Number</label>
+                    <input
+                        type="tel"
+                        className="w-full p-2 border rounded"
+                        placeholder="Enter your phone number"
+                        value={customerInfo.phone}
+                        onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                    />
+                </div>
+
 
                 {/* Shipping Address */}
                 {/* Shipping Address */}
@@ -175,7 +301,7 @@ const Checkout = () => {
                 </div>
 
 
-                {/* Payment Information */}
+                {/* Payment Information
                 <div className="mb-6">
                     <h3 className="text-xl font-semibold">Payment Information</h3>
                     <form className="space-y-4 mt-4">
@@ -194,7 +320,7 @@ const Checkout = () => {
                             </div>
                         </div>
                     </form>
-                </div>
+                </div> */}
 
                 {/* Order Summary */}
                 <div className="mt-6 border-t pt-4">
@@ -215,7 +341,7 @@ const Checkout = () => {
 
                 {/* Submit Button */}
                 <button
-                    onClick={checkout_req}
+                    onClick={() => handleRazorpayPayment()}
                     className="w-full mt-6 bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
                     Proceed to Payment
                 </button>

@@ -15,6 +15,7 @@ export const API_url = {
     Create_checkout: `${live_url}checkout/checkout`,
     Add_farmer: `${live_url}farmer/add`,
     Product_rating: `${live_url}product/rating`,
+    Clear_cart: `${live_url}product/clear`,
 }
 
 const token = Cookies.get("Access_token")

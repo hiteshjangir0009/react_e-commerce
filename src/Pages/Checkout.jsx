@@ -148,7 +148,7 @@ const Checkout = () => {
 
         const options = {
             key: import.meta.env.VITE_TEST_KEY_ID,
-            amount: (calculateTotal()) * 100,
+            amount: (calculateTotal()+50) * 100,
             currency: "INR",
             name: "Khet Connect",
             description: "Test Transaction",
